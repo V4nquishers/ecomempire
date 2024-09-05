@@ -40,11 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stmt = $conn->prepare($sql);
   // $stmt->bind_param('ii', $_SESSION['customer_id'], $shipping_address_id);
   $stmt->execute([$_SESSION['customer_id'], $shipping_address_id]);
-
-  $stmt->close();
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>

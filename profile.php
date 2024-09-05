@@ -16,8 +16,6 @@ $sql = "SELECT * FROM customers WHERE customer_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->execute([$customer_id]);
 $customer_data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-$stmt->close();
 ?>
 
 <!DOCTYPE html>

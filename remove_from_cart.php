@@ -65,6 +65,4 @@ if ($row['quantity'] === 1) {
 
 // Redirect back to shopping cart page
 header('Location: cart.php');
-
-$conn->close();
 ?>
