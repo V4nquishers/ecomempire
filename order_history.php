@@ -79,7 +79,8 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <th>Order Date</th>
       <th>Total Amount</th>
       <th>Shipping Address</th>
-      <th>Action</th>
+      <th>Return</th>
+      <th>View</th>
     </tr>
     <?php foreach ($orders as $order): ?>
     <tr>
@@ -90,6 +91,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <td>
         <button class="return-button" onclick="checkReturnEligibility('<?php echo $order['order_date']; ?>', <?php echo $order['order_id']; ?>)">Request Return</button>
       </td>
+      <td><a href="view_order.php?order_id=<?php echo $order['order_id']; ?>">View Order</a></td>
     </tr>
     <?php endforeach; ?>
   </table>
