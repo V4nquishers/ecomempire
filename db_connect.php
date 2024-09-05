@@ -1,6 +1,6 @@
 <?php
 
-$host = 'velum.cinis.cf'; // Database host
+$host = '103.113.142.2'; // Database host
 $port = '3308'; // Database port
 $dbname = 'ecomempire'; // Database name
 $username = 'root'; // Database username
