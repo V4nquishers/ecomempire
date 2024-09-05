@@ -29,8 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $_SESSION['selected_address_id'] = $selected_address_id; // Store in session
   header("Location: checkout.php");
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
