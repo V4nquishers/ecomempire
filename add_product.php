@@ -77,8 +77,8 @@
 
               $sql = "INSERT INTO supplies (supplier_id, product_id) VALUES (:supplier_id, :product_id)";
               $stmt = $conn->prepare($sql);
-              $stmt->bind_param(':supplier_id', $_SESSION['supplier_id'], PDO::PARAM_INT);
-              $stmt->bind_param(':product_id', $product_id, PDO::PARAM_INT);
+              $stmt->bindValue(':supplier_id', $_SESSION['supplier_id'], PDO::PARAM_INT);
+              $stmt->bindValue(':product_id', $product_id, PDO::PARAM_INT);
               $stmt->execute();
             }
           }
