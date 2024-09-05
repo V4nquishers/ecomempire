@@ -12,6 +12,13 @@
 
   include 'db_connect.php'; // Include the database connection file      
 
+  // Fetch existing categories
+  $categories = [];
+  $sql = "SELECT DISTINCT category FROM products";
+  $stmt = $conn->prepare($sql);
+  $stmt->execute();
+  $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
   // Check if form is submitted and user is logged in
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate and sanitize inputs
@@ -23,6 +30,13 @@
     $manufacturer = trim($_POST['manufacturer']);
     $location = trim($_POST['location']);
     $restock_date = date('Y-m-d'); // Set restock date to current date
+    $category = trim($_POST['category']);
+    $new_category = trim($_POST['new_category']);
+
+    // Use new category if provided
+    if (!empty($new_category)) {
+      $category = $new_category;
+    }
 
     $uploadOk = 0;
     $imagePath = "";
@@ -58,7 +72,7 @@
 
       // Prepare and execute INSERT query (using prepared statements)
       if ($imagePath != "") {
-        $sql = "INSERT INTO products (name, price, stock, image_url, description, specifications, manufacturer, location, restock_date) VALUES (:name, :price, :stock, :image_url, :description, :specifications, :manufacturer, :location, :restock_date)";
+        $sql = "INSERT INTO products (name, price, stock, image_url, description, specifications, manufacturer, location, restock_date, category) VALUES (:name, :price, :stock, :image_url, :description, :specifications, :manufacturer, :location, :restock_date, :category)";
         $stmt = $conn->prepare($sql);
 
         // Bind the parameters
@@ -71,6 +85,7 @@
         $stmt->bindValue(':manufacturer', $manufacturer, PDO::PARAM_STR);
         $stmt->bindValue(':location', $location, PDO::PARAM_STR);
         $stmt->bindValue(':restock_date', $restock_date, PDO::PARAM_STR);
+        $stmt->bindValue(':category', $category, PDO::PARAM_STR);
         $stmt->execute();
 
         if ($stmt->rowCount() == 1) {
@@ -119,7 +134,8 @@
     input[type="text"],
     input[type="number"],
     input[type="file"],
-    textarea {
+    textarea,
+    select {
       width: 100%;
       padding: 10px;
       margin-bottom: 20px;
@@ -178,6 +194,15 @@
             <input type="text" id="manufacturer" name="manufacturer" required>
             <label for="location">Location:</label>
             <input type="text" id="location" name="location" required>
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+              <option value="">Select existing category</option>
+              <?php foreach ($categories as $cat): ?>
+                <option value="<?php echo htmlspecialchars($cat); ?>"><?php echo htmlspecialchars($cat); ?></option>
+              <?php endforeach; ?>
+            </select>
+            <label for="new_category">Or enter new category:</label>
+            <input type="text" id="new_category" name="new_category">
             <label for="uploadimg">Image:</label>
             <input type="file" id="uploadimg" name="uploadimg" accept="image/*" required>
             <input type="submit" value="Add Product">
