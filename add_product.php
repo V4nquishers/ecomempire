@@ -1,88 +1,90 @@
 <?php
   session_start();
-      // Check if user is logged in
-      if (!isset($_SESSION['supplier_id'])) {
-        header('Location: s_login.php'); // Redirect to login page if not logged in
-        exit;
+  // Check if user is logged in
+  if (!isset($_SESSION['supplier_id'])) {
+    header('Location: s_login.php'); // Redirect to login page if not logged in
+    exit;
+  }
+
+  // Error/Success messages (initialize as empty)
+  $errorMsg = "";
+  $successMsg = "";
+
+  include 'db_connect.php'; // Include the database connection file      
+
+  // Check if form is submitted and user is logged in
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate and sanitize inputs
+    $name = trim($_POST['name']);
+    $price = trim($_POST['price']);
+    $stock = trim($_POST['stock']);
+    $description = trim($_POST['description']);
+    $specifications = trim($_POST['specifications']);
+    $manufacturer = trim($_POST['manufacturer']);
+
+    $uploadOk = 0;
+    $imagePath = "";
+
+    // Image upload logic (replace with your validation and upload process)
+    $target_dir = "/sites/ecomempire/assets/"; // Change to your upload directory with proper security measures
+
+    $target_file = $target_dir . basename($_FILES["uploadimg"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    // Check if image file is a real image (replace with additional validations)
+    $check = getimagesize($_FILES["uploadimg"]["tmp_name"]);
+    if($check !== false) {
+      $uploadOk = 1;
+    } else {
+      $errorMsg = "File is not an image.";
+      $uploadOk = 0;
+    }
+
+    // Check if file already exists
+    if (file_exists($target_file)) {
+      $errorMsg = "Sorry, file already exists.";
+      $uploadOk = 0;
+    }
+
+    if ($uploadOk == 1) {
+      // Move the uploaded file to the target directory
+      if (move_uploaded_file($_FILES["uploadimg"]["tmp_name"], $target_file)) {
+        $imagePath = 'assets/' . $_FILES["uploadimg"]["name"];
+      } else {
+        $errorMsg = "Sorry, there was an error uploading your file.";
       }
 
-      // Error/Success messages (initialize as empty)
-      $errorMsg = "";
-      $successMsg = "";
+      // Prepare and execute INSERT query (using prepared statements)
+      if ($imagePath != "") {
+        $sql = "INSERT INTO products (name, price, stock, image_url, description, specifications, manufacturer) VALUES (:name, :price, :stock, :image_url, :description, :specifications, :manufacturer)";
+        $stmt = $conn->prepare($sql);
 
-      include 'db_connect.php'; // Include the database connection file      
+        // Bind the parameters
+        $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+        $stmt->bindValue(':price', $price, PDO::PARAM_STR);
+        $stmt->bindValue(':stock', $stock, PDO::PARAM_INT);
+        $stmt->bindValue(':image_url', $imagePath, PDO::PARAM_STR);
+        $stmt->bindValue(':description', $description, PDO::PARAM_STR);
+        $stmt->bindValue(':specifications', $specifications, PDO::PARAM_STR);
+        $stmt->bindValue(':manufacturer', $manufacturer, PDO::PARAM_STR);
+        $stmt->execute();
 
-      // Check if form is submitted and user is logged in
-      if ($_SERVER['REQUEST_METHOD'] === 'POST') {// Connect to the database (replace with your credentials)
-      
-        // Validate and sanitize inputs
-        $name = trim($_POST['name']);
-        $price = trim($_POST['price']);
-        $stock = trim($_POST['stock']);
+        if ($stmt->rowCount() == 1) {
+          $successMsg = "Product added successfully!";
+        } else {
+          $errorMsg = "Error adding product to database.";
+        }
 
-        $uploadOk = 0;
-        $imagePath = "";
+        $product_id = $conn->lastInsertId();
 
-        // Image upload logic (replace with your validation and upload process)
-        $target_dir = "/sites/ecomempire/assets/"; // Change to your upload directory with proper security measures
-
-        // if (isset($_FILES['image'])) {
-          $target_file = $target_dir . basename($_FILES["uploadimg"]["name"]);
-          $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-          // Check if image file is a real image (replace with additional validations)
-          $check = getimagesize($_FILES["uploadimg"]["tmp_name"]);
-          if($check !== false) {
-            // $errorMsg = "File is an image - " . $check["mime"] . ".";
-            $uploadOk = 1;
-          } else {
-            $errorMsg = "File is not an image.";
-            $uploadOk = 0;
-          }
-
-          // Check if file already exists
-          if (file_exists($target_file)) {
-            $errorMsg = "Sorry, file already exists.";
-            $uploadOk = 0;
-          }
-        // }
-        if ($uploadOk == 1) {
-            // Move the uploaded file to the target directory
-            if (move_uploaded_file($_FILES["uploadimg"]["tmp_name"], $target_file)) {
-              // $imagePath = $target_file; // Update image path on successful upload
-              $imagePath = 'assets/' . $_FILES["uploadimg"]["name"];
-            } else {
-              $errorMsg = "Sorry, there was an error uploading your file.";
-            }
-  
-            // Prepare and execute INSERT query (using prepared statements)
-            if ($imagePath != "") {
-              $sql = "INSERT INTO products (name, price, stock, image_url) VALUES (:name, :price, :stock, :imagePath)";
-              $stmt = $conn->prepare($sql);
-  
-              // $stmt->bind_param("ssss", $name, $price, $stock, $imagePath);
-              $stmt->bindValue(':name', $name, PDO::PARAM_STR);
-              $stmt->bindValue(':price', $price, PDO::PARAM_STR);
-              $stmt->bindValue(':stock', $stock, PDO::PARAM_STR);
-              $stmt->bindValue(':imagePath', $imagePath, PDO::PARAM_STR);
-              $stmt->execute();
-
-              if ($stmt->rowCount() == 1) {
-                $successMsg = "Product added successfully!";
-              } else {
-                $errorMsg = "Error adding product to database.";
-              }
-
-              $product_id = $conn->lastInsertId();
-
-              $sql = "INSERT INTO supplies (supplier_id, product_id) VALUES (:supplier_id, :product_id)";
-              $stmt = $conn->prepare($sql);
-              $stmt->bindValue(':supplier_id', $_SESSION['supplier_id'], PDO::PARAM_INT);
-              $stmt->bindValue(':product_id', $product_id, PDO::PARAM_INT);
-              $stmt->execute();
-            }
-          }
+        $sql = "INSERT INTO supplies (supplier_id, product_id) VALUES (:supplier_id, :product_id)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':supplier_id', $_SESSION['supplier_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->execute();
       }
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -112,7 +114,8 @@
     }
     input[type="text"],
     input[type="number"],
-    input[type="file"] {
+    input[type="file"],
+    textarea {
       width: 100%;
       padding: 10px;
       margin-bottom: 20px;
@@ -163,6 +166,12 @@
             <input type="number" id="price" name="price" min="0" step="0.01" required>
             <label for="stock">Stock:</label>
             <input type="number" id="stock" name="stock" min="0" required>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+            <label for="specifications">Specifications:</label>
+            <textarea id="specifications" name="specifications" rows="4" required></textarea>
+            <label for="manufacturer">Manufacturer:</label>
+            <input type="text" id="manufacturer" name="manufacturer" required>
             <label for="uploadimg">Image:</label>
             <input type="file" id="uploadimg" name="uploadimg" accept="image/*" required>
             <input type="submit" value="Add Product">
