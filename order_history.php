@@ -29,74 +29,69 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <title>EcomEmpire - Order History</title>
 <style>
   table {
-  width: 90%;
-  border-collapse: collapse;
-  margin: 20px auto 30px auto;
-  border-radius: 10px;
-}
-
-th, td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-td img {
-  width: 100px;
-}
-
-.subtotal, .total {
-  text-align: right;
-}
-
-a {
-  text-decoration: none;
-  color: #333;
-  padding: 10px 20px;
-  background-color: #ddd;
-  border-radius: 5px;
-  display: inline-block;
-  margin: 10px auto;
-}
-
-a:hover {
-  background-color: #ccc;
-}
+    width: 90%;
+    border-collapse: collapse;
+    margin: 20px auto 30px auto;
+    border-radius: 10px;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  .return-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
 </style>
+<script>
+  function checkReturnEligibility(orderDate, orderId) {
+    const currentDate = new Date();
+    const orderDateObj = new Date(orderDate);
+    const diffTime = Math.abs(currentDate - orderDateObj);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 30) {
+      alert("Not eligible for return");
+    } else {
+      window.location.href = `return.php?order_id=${orderId}`;
+    }
+  }
+</script>
 </head>
 <body>
-
-<h1>Your Order History</h1>
-
-<?php if (empty($orders)): ?>
-  <p>You haven't placed any orders yet.</p>
-<?php else: ?>
-
-<table>
-  <tr>
-    <th>Order ID</th>
-    <th>Date Ordered</th>
-    <th>Total Amount</th>
-    <th>Shipping Address</th>
-    <th>View Order</th>
-  </tr>
-  <?php foreach ($orders as $order): ?>
-  <tr>
-    <td><?php echo $order['order_id']; ?></td>
-    <td><?php echo date('Y-m-d', strtotime($order['order_date'])); ?></td>
-    <td>₹<?php echo number_format($order['total_amount'], 2); ?></td>
-    <td><?php echo $order['address'] . " " . $order['city'] . " " . $order['postal_code'] . " " . $order['state']; ?></td>
-    <td><a href="view_order.php?order_id=<?php echo $order['order_id']; ?>">View</a></td>
-  </tr>
-  <?php endforeach; ?>
-</table>
-
-<?php endif; ?>
-
+  <h1>Order History</h1>
+  <table>
+    <tr>
+      <th>Order ID</th>
+      <th>Order Date</th>
+      <th>Total Amount</th>
+      <th>Shipping Address</th>
+      <th>Action</th>
+    </tr>
+    <?php foreach ($orders as $order): ?>
+    <tr>
+      <td><?php echo htmlspecialchars($order['order_id']); ?></td>
+      <td><?php echo htmlspecialchars($order['order_date']); ?></td>
+      <td><?php echo htmlspecialchars($order['total_amount']); ?></td>
+      <td><?php echo htmlspecialchars($order['address'] . ', ' . $order['city'] . ', ' . $order['state'] . ' ' . $order['postal_code']); ?></td>
+      <td>
+        <button class="return-button" onclick="checkReturnEligibility('<?php echo $order['order_date']; ?>', <?php echo $order['order_id']; ?>)">Request Return</button>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+  </table>
 </body>
 </html>
