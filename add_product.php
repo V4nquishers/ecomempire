@@ -21,6 +21,8 @@
     $description = trim($_POST['description']);
     $specifications = trim($_POST['specifications']);
     $manufacturer = trim($_POST['manufacturer']);
+    $location = trim($_POST['location']);
+    $restock_date = date('Y-m-d'); // Set restock date to current date
 
     $uploadOk = 0;
     $imagePath = "";
@@ -56,7 +58,7 @@
 
       // Prepare and execute INSERT query (using prepared statements)
       if ($imagePath != "") {
-        $sql = "INSERT INTO products (name, price, stock, image_url, description, specifications, manufacturer) VALUES (:name, :price, :stock, :image_url, :description, :specifications, :manufacturer)";
+        $sql = "INSERT INTO products (name, price, stock, image_url, description, specifications, manufacturer, location, restock_date) VALUES (:name, :price, :stock, :image_url, :description, :specifications, :manufacturer, :location, :restock_date)";
         $stmt = $conn->prepare($sql);
 
         // Bind the parameters
@@ -67,21 +69,23 @@
         $stmt->bindValue(':description', $description, PDO::PARAM_STR);
         $stmt->bindValue(':specifications', $specifications, PDO::PARAM_STR);
         $stmt->bindValue(':manufacturer', $manufacturer, PDO::PARAM_STR);
+        $stmt->bindValue(':location', $location, PDO::PARAM_STR);
+        $stmt->bindValue(':restock_date', $restock_date, PDO::PARAM_STR);
         $stmt->execute();
 
         if ($stmt->rowCount() == 1) {
           $successMsg = "Product added successfully!";
+          $product_id = $conn->lastInsertId();
+
+          // Insert into supplies table
+          $sql = "INSERT INTO supplies (supplier_id, product_id) VALUES (:supplier_id, :product_id)";
+          $stmt = $conn->prepare($sql);
+          $stmt->bindValue(':supplier_id', $_SESSION['supplier_id'], PDO::PARAM_INT);
+          $stmt->bindValue(':product_id', $product_id, PDO::PARAM_INT);
+          $stmt->execute();
         } else {
           $errorMsg = "Error adding product to database.";
         }
-
-        $product_id = $conn->lastInsertId();
-
-        $sql = "INSERT INTO supplies (supplier_id, product_id) VALUES (:supplier_id, :product_id)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':supplier_id', $_SESSION['supplier_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':product_id', $product_id, PDO::PARAM_INT);
-        $stmt->execute();
       }
     }
   }
@@ -172,6 +176,8 @@
             <textarea id="specifications" name="specifications" rows="4" required></textarea>
             <label for="manufacturer">Manufacturer:</label>
             <input type="text" id="manufacturer" name="manufacturer" required>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
             <label for="uploadimg">Image:</label>
             <input type="file" id="uploadimg" name="uploadimg" accept="image/*" required>
             <input type="submit" value="Add Product">
