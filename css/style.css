@@ -1,0 +1,238 @@
+body {
+    font-family: 'Gandhi Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+.header {
+    color: white;
+    height: 100px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navbar {
+    margin-bottom: 50px;
+    padding: 15px;
+    color: white;
+    height: 50px;
+    position: sticky;
+    top: 0;
+}
+
+.navbar a {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    display: block;
+    float: left;
+    border-radius: 7px;
+    text-align: center;
+}
+
+.navbar a.split {
+    float: right;
+    color: white;
+}
+
+.navbar a.split:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    /* Important for vertical align on mobile phones */
+    margin: 0;
+}
+
+/* Add a red background color to navbar links on hover */
+.dropdown:hover .dropbtn {
+    background-color: #bbb;
+    color: black;
+    border-radius: 7px;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    /* background-color: #416162; */
+    min-width: 70px;
+    max-width: 70px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    margin: 0;
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    min-width: 70px;
+    max-width: 70px;
+    background-color: #416162;
+    border-radius: 0;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.product {
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 20px;
+    width: calc(25%);
+    min-width: max-content;
+    border-radius: 10px;
+}
+
+.product img {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.product-name {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.product-price {
+    color: #555;
+}
+
+.add-to-cart {
+    background: #5cadb8;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    max-width: max-content;
+    border-radius: 7px;
+}
+
+.add-to-cart:hover {
+    background: #4c8aae;
+}
+
+.supplier {
+    background: #FF5733;
+}
+
+.customer {
+    background: #446567;
+}
+
+form {
+    background-color: #fff;
+    max-width: 400px;
+    margin: 30px auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+form.hidden {
+    background-color: #fff;
+    max-width: 400px;
+    margin: 30px auto;
+    padding: 20px;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    border-radius: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="radio"]
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    /* Added to keep input width consistent */
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #5cadb8;
+    color: white;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #4c8aae;
+}
+
+button[type="submit"] {
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #5cadb8;
+    color: white;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #4c8aae;
+}
+
+.footer {
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+}
