@@ -2,6 +2,7 @@
 include 'db_connect.php';
 
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
 
 $query = "SELECT COUNT(*) AS total_users FROM customers";
 
