@@ -32,6 +32,7 @@
     $restock_date = date('Y-m-d'); // Set restock date to current date
     $category = trim($_POST['category']);
     $new_category = trim($_POST['new_category']);
+    $refundable = isset($_POST['refundable']) ? 1 : 0; // Set refundable to 1 if checked, otherwise 0
 
     // Use new category if provided
     if (!empty($new_category)) {
@@ -72,7 +73,7 @@
 
       // Prepare and execute INSERT query (using prepared statements)
       if ($imagePath != "") {
-        $sql = "INSERT INTO products (name, price, stock, image_url, description, specifications, manufacturer, location, restock_date, category) VALUES (:name, :price, :stock, :image_url, :description, :specifications, :manufacturer, :location, :restock_date, :category)";
+        $sql = "INSERT INTO products (name, price, stock, image_url, description, specifications, manufacturer, location, restock_date, category, refundable) VALUES (:name, :price, :stock, :image_url, :description, :specifications, :manufacturer, :location, :restock_date, :category, :refundable)";
         $stmt = $conn->prepare($sql);
 
         // Bind the parameters
@@ -86,6 +87,7 @@
         $stmt->bindValue(':location', $location, PDO::PARAM_STR);
         $stmt->bindValue(':restock_date', $restock_date, PDO::PARAM_STR);
         $stmt->bindValue(':category', $category, PDO::PARAM_STR);
+        $stmt->bindValue(':refundable', $refundable, PDO::PARAM_BOOL);
         $stmt->execute();
 
         if ($stmt->rowCount() == 1) {
@@ -203,6 +205,8 @@
             </select>
             <label for="new_category">Or enter new category:</label>
             <input type="text" id="new_category" name="new_category">
+            <label for="refundable">Refundable:</label>
+            <input type="checkbox" id="refundable" name="refundable">
             <label for="uploadimg">Image:</label>
             <input type="file" id="uploadimg" name="uploadimg" accept="image/*" required>
             <input type="submit" value="Add Product">
