@@ -10,7 +10,7 @@ if (!isset($_SESSION['customer_id'])) {
 }
 
 // Get user's order history
-$sql = "SELECT o.order_id, o.order_date, o.total_amount, s.address, s.city, s.state, s.postal_code
+$sql = "SELECT o.order_id, o.order_date, o.total_amount, o.order_status, s.address, s.city, s.state, s.postal_code
         FROM orders o
         INNER JOIN shipping_addresses s ON o.shipping_address_id = s.shipping_address_id
         WHERE o.customer_id = ?
