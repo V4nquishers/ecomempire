@@ -20,8 +20,6 @@ $sql = "SELECT p.name, p.price, p.image_url, op.quantity
 $stmt = $conn->prepare($sql);
 $stmt->execute([$order_id]);
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$stmt->close();
 ?>
 
 <!DOCTYPE html>
