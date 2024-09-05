@@ -69,6 +69,10 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
       window.location.href = `return.php?order_id=${orderId}`;
     }
   }
+
+  function viewOrder(orderId) {
+        window.location.href = `view_order.php?order_id=${orderId}`;
+      }
 </script>
 </head>
 <body>
@@ -79,6 +83,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <th>Order Date</th>
       <th>Total Amount</th>
       <th>Shipping Address</th>
+      <th>Order Status</th>
       <th>Return</th>
       <th>View</th>
     </tr>
@@ -88,10 +93,12 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <td><?php echo htmlspecialchars($order['order_date']); ?></td>
       <td><?php echo htmlspecialchars($order['total_amount']); ?></td>
       <td><?php echo htmlspecialchars($order['address'] . ', ' . $order['city'] . ', ' . $order['state'] . ' ' . $order['postal_code']); ?></td>
+      <td><?php echo htmlspecialchars($order['order_status']); ?></td>
       <td>
         <button class="return-button" onclick="checkReturnEligibility('<?php echo $order['order_date']; ?>', <?php echo $order['order_id']; ?>)">Request Return</button>
       </td>
-      <td><a href="view_order.php?order_id=<?php echo $order['order_id']; ?>">View Order</a></td>
+      <td>
+        <button class="view-button" onclick="viewOrder(<?php echo $order['order_id']; ?>)">View Order</button>
     </tr>
     <?php endforeach; ?>
   </table>
