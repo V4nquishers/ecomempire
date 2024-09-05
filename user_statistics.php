@@ -4,7 +4,12 @@ include 'db_connect.php';
 header('Content-Type: application/json');
 header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
 
-$query = "SELECT COUNT(*) AS total_users FROM customers";
+$query = $query = "SELECT 
+             COUNT(*) AS total_users,
+             SUM(CASE WHEN loyalty_level = 'Gold' THEN 1 ELSE 0 END) AS gold_members,
+             SUM(CASE WHEN loyalty_level = 'Silver' THEN 1 ELSE 0 END) AS silver_members,
+             SUM(CASE WHEN loyalty_level = 'Bronze' THEN 1 ELSE 0 END) AS bronze_members
+            FROM customers";
 
 try {
     $stmt = $conn->prepare($query);
