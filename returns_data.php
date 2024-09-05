@@ -1,17 +1,6 @@
 <?php
-// Connect to the database
-$servername = "localhost"; // or your server name
-$username = "your_username"; // your database username
-$password = "your_password"; // your database password
-$dbname = "ecommerce_db"; // your database name
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Include the database connection file
+include 'db_connect.php';
 
 // SQL query to fetch return data
 $sql = "
@@ -23,8 +12,14 @@ $sql = "
     GROUP BY return_reason;
 ";
 
-// Execute the query and fetch results
-$result = $conn->query($sql);
+// Prepare the query
+$stmt = $conn->prepare($sql);
+
+// Execute the query
+$stmt->execute();
+
+// Fetch the results
+$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Initialize an empty array to store chart data
 $chartData = [
@@ -32,13 +27,10 @@ $chartData = [
     'values' => []
 ];
 
-// Check if there are results
-if ($result->num_rows > 0) {
-    // Fetch results and populate chart data
-    while ($row = $result->fetch_assoc()) {
-        $chartData['labels'][] = $row['label'];
-        $chartData['values'][] = (int) $row['value'];
-    }
+// Populate chart data
+foreach ($results as $row) {
+    $chartData['labels'][] = $row['label'];
+    $chartData['values'][] = (int) $row['value'];
 }
 
 // Fetch the total number of returns and calculate return percentage (dummy example)
@@ -51,8 +43,6 @@ $chartData['returnPercentage'] = $returnPercentage;
 
 // Return the chart data as a JSON response
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
 echo json_encode($chartData);
-
-// Close the connection
-$conn->close();
 ?>
