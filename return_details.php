@@ -44,6 +44,7 @@ try {
 
     // Return the chart data as a JSON response
     header('Content-Type: application/json');
+    header("Access-Control-Allow-Origin: *");
     echo json_encode($chartData);
 } catch (PDOException $e) {
     // Handle any errors
