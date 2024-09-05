@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
     // Get the inserted order ID (optional, for further processing)
-    $shipping_address_id = $conn->insert_id;
+    $shipping_address_id = $conn->lastInsertId();
 
   $sql = "INSERT INTO ships_to (customer_id, shipping_address_id) VALUES (?, ?)";
   $stmt = $conn->prepare($sql);
